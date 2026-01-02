@@ -2,3 +2,10 @@ import { type Database } from "./database.types";
 
 //타입을 정제한다
 export type PostEntity = Database["public"]["Tables"]["post"]["Row"];
+
+export type UseMutationCallback = {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+  onMutate?: () => void;
+  onSettled?: () => void;
+};
