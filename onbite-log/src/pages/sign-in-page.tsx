@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSignInWithPassword } from "@/hooks/mutations/use-sign-in-with-password";
+import { useSignInWithPassword } from "@/hooks/mutations/auth/use-sign-in-with-password";
 import { useState } from "react";
 import { Link } from "react-router";
 import gitHubLogo from "@/assets/github-mark.svg";
-import { useSignInWithOAuth } from "@/hooks/mutations/use-sign-in-with-oauth";
+import { useSignInWithOAuth } from "@/hooks/mutations/auth/use-sign-in-with-oauth";
 import { toast } from "sonner";
 import { generateErrorMessage } from "@/lib/error";
 
@@ -86,9 +86,15 @@ export default function SignInPage() {
           GitHub 계정으로 로그인
         </Button>
       </div>
-      <div>
+      <div className="flex flex-col gap-2">
         <Link className="text-muted-foreground hover:underline" to={"/sign-up"}>
           이미 계정이 없으시다면? 회원가입
+        </Link>
+        <Link
+          className="text-muted-foreground hover:underline"
+          to={"/forget-password"}
+        >
+          비밀번호를 잊으셨나요?
         </Link>
       </div>
     </div>

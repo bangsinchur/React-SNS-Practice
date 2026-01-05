@@ -5,10 +5,11 @@ import ForgetPasswordPage from "./pages/forget-password-page";
 import PostDetailPage from "./pages/post-detail-page";
 import ProfileDetailPage from "./pages/profile-detail-page";
 import ResetPasswordPage from "./pages/reset-password-page";
-import IndexPage from "./pages/index-page";
+
 import GlobalLayout from "./components/layout/global-layout";
 import GuestOnlyLayout from "./components/layout/guest-only-layout";
 import MemberOnlyLayout from "./components/layout/member-only-layout";
+import IndexPage from "./pages/index-page";
 
 export default function RootRoute() {
   return (
