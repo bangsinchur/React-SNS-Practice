@@ -21,10 +21,25 @@ export async function uploadImage({
   return publicUrl;
 }
 
+export async function deleteImages(filePath: string[]) {
+  const { data, error } = await supabase.storage
+    .from(BUKET_NAME)
+    .remove(filePath);
 
-export async function deleteImages(filePath:string[]){
-    const {data,error} = await supabase.storage.from(BUKET_NAME).remove(filePath);
+  if (error) throw error;
+  return data;
+}
 
-    if(error) throw error
-    return data;
+export async function deleteImagesInPath(path: string) {
+  const { data: files, error: fetchFilesError } = await supabase.storage
+    .from(BUKET_NAME)
+    .list(path);
+
+  if (fetchFilesError) throw fetchFilesError;
+
+  const { error: removeError } = await supabase.storage
+    .from(BUKET_NAME)
+    .remove(files.map((file) => `${path}/${file.name}`));
+
+  if (removeError) throw removeError;
 }

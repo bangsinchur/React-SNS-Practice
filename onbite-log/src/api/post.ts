@@ -2,6 +2,17 @@ import supabase from "@/lib/supabase";
 import { deleteImages, uploadImage } from "./image";
 import type { PostEntity } from "@/types";
 
+export async function fetchPosts({ from, to }: { from: number; to: number }) {
+  const { data, error } = await supabase
+    .from("post")
+    .select("*, author: profile!author_id (*)")
+    .order("created_at", { ascending: false }) //오름차순을 false로 하여, 내림차순으로 만듦.
+    .range(from, to);
+
+  if (error) throw error;
+  return data;
+}
+
 export async function createPost(content: string) {
   const { data, error } = await supabase
     .from("post")
