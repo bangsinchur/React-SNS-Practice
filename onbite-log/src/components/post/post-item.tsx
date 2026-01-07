@@ -1,7 +1,6 @@
 import { HeartIcon, MessageCircle } from "lucide-react";
 import type { Post } from "@/types";
 import defaultAvatar from "@/assets/default-avatar.jpg";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -10,8 +9,31 @@ import {
 import { formatTimeAgo } from "@/lib/time";
 import EditPostButton from "./edit-post-button";
 import DeletePostButton from "./delete-post-button";
+import { useSession } from "@/store/session";
+import { usePostByIdData } from "@/hooks/queries/use-post-by-id-data";
+import Loader from "../loader";
+import Fallback from "../fallback";
+import LikePostButton from "./like-post-button";
 
-export default function PostItem(post: Post) {
+export default function PostItem({ postId }: { postId: number }) {
+  const session = useSession();
+  const userId = session?.user.id;
+
+  //postId를 통해 캐시를 불러옴
+  const {
+    data: post,
+    error,
+    isPending,
+  } = usePostByIdData({
+    postId,
+    type: "FEED",
+  });
+
+  if (isPending) return <Loader />;
+  if (error) return <Fallback />;
+
+  const isMine = userId === post.author_id;
+
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
       {/* 1. 유저 정보, 수정/삭제 버튼 */}
@@ -35,8 +57,12 @@ export default function PostItem(post: Post) {
 
         {/* 1-2. 수정/삭제 버튼 */}
         <div className="text-muted-foreground flex text-sm">
-          <EditPostButton {...post} />
-          <DeletePostButton id={post.id} />
+          {isMine && (
+            <>
+              <EditPostButton {...post} />
+              <DeletePostButton id={post.id} />
+            </>
+          )}
         </div>
       </div>
 
@@ -67,10 +93,7 @@ export default function PostItem(post: Post) {
       {/* 3. 좋아요, 댓글 버튼 */}
       <div className="flex gap-2">
         {/* 3-1. 좋아요 버튼 */}
-        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
-          <HeartIcon className="h-4 w-4" />
-          <span>0</span>
-        </div>
+        <LikePostButton id={post.id} likeCount={post.like_count} isLiked={post.isLiked} />
 
         {/* 3-2. 댓글 버튼 */}
         <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">

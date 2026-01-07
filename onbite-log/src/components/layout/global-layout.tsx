@@ -14,7 +14,7 @@ export default function GlobalLayout() {
               src={logo}
               alt="한입로그의 로고, 메세지 말풍선을 형상화한 모양이다"
             />
-            <div className="font-bold">한입 로그</div>
+            <div className="font-bold">B.GENLOG</div>
           </Link>
           <div className="flex items-center gap-5">
             <div className="hover:bg-muted cursor-pointer rounded-full p-2">
