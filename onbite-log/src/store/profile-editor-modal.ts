@@ -1,0 +1,28 @@
+import { create } from "zustand";
+import { combine, devtools } from "zustand/middleware";
+
+const initialState = {
+  isOpen: false,
+};
+
+const useProfileEditorModalStore = create(
+  devtools(
+    combine(initialState, (set) => ({
+      actions: {
+        open: () => set({ isOpen: true }),
+        close: () => set({ isOpen: false }),
+      },
+    })),
+    { name: "ProfileEditorModalStroe" },
+  ),
+);
+
+export const useOpenProfileEditoerModa = () => {
+  const open = useProfileEditorModalStore((store) => store.actions.open);
+  return open;
+};
+
+export const useProfileEditorModal = () => {
+  const store = useProfileEditorModalStore();
+  return store;
+};

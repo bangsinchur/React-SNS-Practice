@@ -6,17 +6,23 @@ export async function fetchPosts({
   from,
   to,
   userId,
+  authorId,
 }: {
   from: number;
   to: number;
   userId: string;
+  authorId?: string;
 }) {
-  const { data, error } = await supabase
+  const request = supabase
     .from("post")
     .select("*, author: profile!author_id (*), myLiked:like!post_id (*)")
     .eq("like.user_id", userId) //like.user_id = '현재 유저의 아이디" 랑 같은 것만
     .order("created_at", { ascending: false }) //오름차순을 false로 하여, 내림차순으로 만듦.
     .range(from, to);
+
+  if (authorId) request.eq("author_id", authorId);
+
+  const { data, error } = await request;
 
   if (error) throw error;
   return data.map((post) => ({

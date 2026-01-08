@@ -45,7 +45,7 @@ export default function useTogglePostLike(callbacks?: UseMutationCallback) {
       if (callbacks?.onSuccess) callbacks.onSuccess();
     },
     onError: (error, _, context) => {
-      //낙관적 업데이트 실패시 데이터를 원상복구 하는 기능 함수
+      //낙관적 업데이트 실패시 데이터를 원상복구 하는 함수
       if (context && context.prevPost) {
         queryClient.setQueryData(
           QUERY_KEYS.post.byId(context.prevPost.id),
