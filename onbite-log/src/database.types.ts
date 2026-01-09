@@ -20,21 +20,27 @@ export type Database = {
           content: string
           created_at: string
           id: number
+          parent_comment_id: number | null
           post_id: number
+          root_comment_id: number | null
         }
         Insert: {
           author_id?: string
           content?: string
           created_at?: string
           id?: number
+          parent_comment_id?: number | null
           post_id: number
+          root_comment_id?: number | null
         }
         Update: {
           author_id?: string
           content?: string
           created_at?: string
           id?: number
+          parent_comment_id?: number | null
           post_id?: number
+          root_comment_id?: number | null
         }
         Relationships: [
           {
@@ -45,10 +51,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "comment_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "comment"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "comment_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "post"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_root_comment_id_fkey"
+            columns: ["root_comment_id"]
+            isOneToOne: false
+            referencedRelation: "comment"
             referencedColumns: ["id"]
           },
         ]

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import defaultAvatar from "@/assets/default-avatar.jpg";
-import type { Comment } from "@/types";
+import type { Comment, NestedComment } from "@/types";
 import { formatTimeAgo } from "@/lib/time";
 import { useSession } from "@/store/session";
 import { useState } from "react";
@@ -9,7 +9,7 @@ import { useDeleteComment } from "@/hooks/mutations/comment/use-delete-comment";
 import { toast } from "sonner";
 import { useOpenAlertModal } from "@/store/alert-modal";
 
-export default function CommentItem(props: Comment) {
+export default function CommentItem(props: NestedComment) {
   const session = useSession();
   const openAlertModal = useOpenAlertModal();
 
@@ -23,9 +23,14 @@ export default function CommentItem(props: Comment) {
     });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isReply, setIsReplay] = useState(false);
 
   const toggleIsEditing = () => {
     setIsEditing(!isEditing);
+  };
+
+  const toggleIsReply = () => {
+    setIsReplay(!isReply);
   };
 
   const handleDeleteClick = () => {
@@ -39,8 +44,13 @@ export default function CommentItem(props: Comment) {
   };
 
   const isMine = session?.user.id === props.author_id;
+  const isRootComment = props.parentComment === undefined;
+  const isOverTwoLevels = props.parent_comment_id !== props.root_comment_id;
+
   return (
-    <div className={"flex flex-col gap-8 border-b pb-5"}>
+    <div
+      className={`flex flex-col gap-8 pb-5 ${isRootComment ? "border-b" : "ml-6"}`}
+    >
       <div className="flex items-start gap-4">
         <Link to={"#"}>
           <div className="flex h-full flex-col">
@@ -60,12 +70,24 @@ export default function CommentItem(props: Comment) {
               onClose={toggleIsEditing}
             />
           ) : (
-            <div>{props.content}</div>
+            <div>
+              {isOverTwoLevels && (
+                <span className="font-bold text-blue-500">
+                  @{props.parentComment?.author.nickname}&nbsp;
+                </span>
+              )}
+              {props.content}
+            </div>
           )}
 
           <div className="text-muted-foreground flex justify-between text-sm">
             <div className="flex items-center gap-2">
-              <div className="cursor-pointer hover:underline">댓글</div>
+              <div
+                onClick={toggleIsReply}
+                className="cursor-pointer hover:underline"
+              >
+                댓글
+              </div>
               <div className="bg-border h-[13px] w-[2px]"></div>
               <div>{formatTimeAgo(props.created_at)}</div>
             </div>
@@ -91,6 +113,18 @@ export default function CommentItem(props: Comment) {
           </div>
         </div>
       </div>
+      {isReply && (
+        <CommentEditor
+          type="REPLY"
+          postId={props.post_id}
+          parentCommentId={props.id}
+          rootCommentId={props.root_comment_id || props.id}
+          onClose={toggleIsReply}
+        />
+      )}
+      {props.children.map((comment) => (
+        <CommentItem key={comment.id} {...comment} />
+      ))}
     </div>
   );
 }
